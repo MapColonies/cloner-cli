@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { Argv, CommandModule } from 'yargs';
+import { Argv, CommandModule, Arguments} from 'yargs';
 import { HelloWorldManager } from './helloWorldManager';
 
 @injectable()
@@ -12,10 +12,12 @@ export class HelloWorldCommand implements CommandModule {
   public constructor(private readonly manager: HelloWorldManager) {}
 
   public builder = (yargs: Argv): Argv => {
-    return yargs;
+    return yargs.positional('jsonPath', { describe: 'json with list of repos', type: 'string' })
+    .positional('destPath', { describe: 'destination directory to store results', type: 'string' });
   };
 
-  public handler = async (): Promise<void> => {
+  public handler = async (args: Arguments): Promise<void> => {
+
     this.manager.sayHello();
     return Promise.resolve();
   };

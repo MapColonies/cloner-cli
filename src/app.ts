@@ -5,6 +5,7 @@ import { hideBin } from 'yargs/helpers';
 import { Argv } from 'yargs';
 import { SERVICES } from './common/constants';
 import { SayCommand } from './sayCommand/sayCommand';
+import {ExtractCommand} from './extractCommand/extractCommand';
 import { registerExternalValues, RegisterOptions } from './containerConfig';
 import { HelloWorldCommand } from './helloWorldCommand/helloWorldCommand';
 
@@ -15,7 +16,8 @@ export class App {
   public constructor(
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     private readonly sayCommand: SayCommand,
-    private readonly helloWorldCommand: HelloWorldCommand
+    private readonly helloWorldCommand: HelloWorldCommand,
+    private readonly extractCommand: ExtractCommand,
   ) {
     this.cli = this.createYargsCli();
   }
@@ -27,6 +29,7 @@ export class App {
   private createYargsCli(): Argv {
     return yargs()
       .usage('Usage: $0 <command> [options]')
+      .command(this.extractCommand)
       .command(this.helloWorldCommand)
       .command(this.sayCommand)
       .help('h')
