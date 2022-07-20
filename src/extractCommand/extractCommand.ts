@@ -12,7 +12,11 @@ export class ExtractCommand implements CommandModule {
   public constructor(private readonly manager: ExtractManager) {}
 
   public builder = (yargs: Argv): Argv => {
-    const jsonDescription = ''
+    const jsonDescription = 'json configuration file containing array of sources with the following fields:\n'+
+    '"repositoryUrl" - repository https clone url.\n'+
+    '"branch" - name of the branch to use as a source.\n'+
+    '"directory" - (optional) sub directory to add to the archive (default - entire repository).\n' +
+    '"targetDir" - (optional) name of the directory in the archive to store the repository files in (default - repository name).';
     return yargs.positional('jsonPath', { describe: jsonDescription, type: 'string' })
     .positional('destPath', { describe: 'destination zip file to store results', type: 'string' })
   };
