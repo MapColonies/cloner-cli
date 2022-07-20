@@ -4,17 +4,14 @@ import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 import { Argv } from 'yargs';
 import { SERVICES } from './common/constants';
-import {ExtractCommand} from './extractCommand/extractCommand';
+import { ExtractCommand } from './extractCommand/extractCommand';
 import { registerExternalValues, RegisterOptions } from './containerConfig';
 
 @singleton()
 export class App {
   public cli: Argv;
 
-  public constructor(
-    @inject(SERVICES.LOGGER) private readonly logger: Logger,
-    private readonly extractCommand: ExtractCommand,
-  ) {
+  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, private readonly extractCommand: ExtractCommand) {
     this.cli = this.createYargsCli();
   }
 
@@ -23,12 +20,7 @@ export class App {
   }
 
   private createYargsCli(): Argv {
-    return yargs()
-      .usage('Usage: $0 <command> [options]')
-      .command(this.extractCommand)
-      .help('h')
-      .alias('h', 'help')
-      .strict();
+    return yargs().usage('Usage: $0 <command> [options]').command(this.extractCommand).help('h').alias('h', 'help').strict();
   }
 }
 
