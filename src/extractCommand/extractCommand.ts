@@ -6,20 +6,19 @@ import { ExtractManager } from './extractManager';
 export class ExtractCommand implements CommandModule {
   public deprecated = false;
   public command = '$0 <jsonPath> <destPath>';
-  public describe = 'Run list of repos to extract from github';
+  public describe = 'create zip of configured repositories (or sub directories)';
   public aliases = ['extract'];
 
   public constructor(private readonly manager: ExtractManager) {}
 
   public builder = (yargs: Argv): Argv => {
-    return yargs.positional('jsonPath', { describe: 'json with list of repos', type: 'string' })
-    .positional('destPath', { describe: 'destination directory to store results', type: 'string' });;
+    const jsonDescription = ''
+    return yargs.positional('jsonPath', { describe: jsonDescription, type: 'string' })
+    .positional('destPath', { describe: 'destination zip file to store results', type: 'string' })
   };
 
   public handler = async (args: Arguments): Promise<void> => {
-    this.manager.sayHello();
-    console.log(args['jsonPath'])
-    console.log(args['destPath'])
+    this.manager.ZipSources(args['jsonPath'] as string,args['destPath'] as string);
     return Promise.resolve();
   };
 }
