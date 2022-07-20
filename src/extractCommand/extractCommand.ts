@@ -24,7 +24,7 @@ export class ExtractCommand implements CommandModule {
   };
 
   public handler = async (args: Arguments): Promise<void> => {
-    this.manager.ZipSources(args['jsonPath'] as string, args['destPath'] as string);
+    await this.manager.zipSources(args['jsonPath'] as string, args['destPath'] as string);
     return Promise.resolve();
   };
 }

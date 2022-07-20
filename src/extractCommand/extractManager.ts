@@ -7,7 +7,7 @@ import { DirectorySource, InputDirectorySource } from './directorySource';
 
 @singleton()
 export class ExtractManager {
-  public async ZipSources(inputFile: string, targetFile: string) {
+  public async zipSources(inputFile: string, targetFile: string): Promise<void> {
     const input = await fsp.readFile(inputFile, { encoding: 'utf-8' });
     const inputSources = JSON.parse(input) as InputDirectorySource[];
     const cloneTarget = Path.join('.', 'clones');
@@ -17,15 +17,16 @@ export class ExtractManager {
     const archive = this.createArchive(targetFile);
     await this.addDirectoriesToArchive(sources, archive);
     console.log('finalizing archive');
-    archive.finalize();
+    await archive.finalize();
     console.log('removing clones');
     await fsp.rmdir(cloneTarget, { recursive: true });
   }
 
-  private parseInputSources(inputSources: InputDirectorySource[], target: string) {
+  private parseInputSources(inputSources: InputDirectorySource[], target: string): DirectorySource[] {
     const sources: DirectorySource[] = [];
     inputSources.forEach((source) => {
       if (source.repositoryUrl.endsWith('/')) {
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         source.repositoryUrl = source.repositoryUrl.slice(0, -1);
       }
       const repoName = source.repositoryUrl.substring(source.repositoryUrl.lastIndexOf('/'));
@@ -35,7 +36,7 @@ export class ExtractManager {
     return sources;
   }
 
-  private async cloneAll(sources: DirectorySource[]) {
+  private async cloneAll(sources: DirectorySource[]): Promise<void> {
     const repositories = new Set<string>();
     const ops = [];
     const git = simpleGit();
@@ -51,7 +52,7 @@ export class ExtractManager {
     console.log(`finished cloning all repositories`);
   }
 
-  private createArchive(targetFile: string) {
+  private createArchive(targetFile: string): archiver.Archiver {
     const output = createWriteStream(targetFile);
     const archive = archiver('zip', {
       zlib: { level: 9 }, // Sets the compression level.
@@ -59,7 +60,7 @@ export class ExtractManager {
     // listen for all archive data to be written
     // 'close' event is fired only when a file descriptor is involved
     output.on('close', function () {
-      console.log(archive.pointer() + ' total bytes');
+      console.log(`${archive.pointer()} total bytes`);
       console.log('archiver has been finalized and the output file descriptor has closed.');
     });
     // This event is fired when the data source is drained no matter what was the data source.
@@ -86,14 +87,16 @@ export class ExtractManager {
     return archive;
   }
 
-  private async addDirectoriesToArchive(sources: DirectorySource[], archive: archiver.Archiver) {
+  private async addDirectoriesToArchive(sources: DirectorySource[], archive: archiver.Archiver): Promise<void> {
     for (const source of sources) {
       const src = source.repositoryPath;
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       const srcDir = source.directory ? Path.join(src, source.directory) : src;
       console.log(`adding ${srcDir} to archive`);
       const git = simpleGit(src);
       await git.checkout(source.branch);
       await git.pull();
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       const targetDir = source.targetDir ? source.targetDir : source.repositoryName;
       archive.directory(srcDir, targetDir);
     }
