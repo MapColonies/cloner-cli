@@ -7,14 +7,14 @@ import { DirectorySource, InputDirectorySource } from './directorySource';
 
 @singleton()
 export class ExtractManager {
-  public async zipSources(inputFile: string, targetFile: string): Promise<void> {
+  public async zipSources(inputFile: string, targetFile: string, useTar: boolean): Promise<void> {
     const input = await fsp.readFile(inputFile, { encoding: 'utf-8' });
     const inputSources = JSON.parse(input) as InputDirectorySource[];
     const cloneTarget = Path.join('.', 'clones');
     const sources: DirectorySource[] = this.parseInputSources(inputSources, cloneTarget);
 
     await this.cloneAll(sources);
-    const archive = this.createArchive(targetFile);
+    const archive = this.createArchive(targetFile, useTar);
     await this.addDirectoriesToArchive(sources, archive);
     console.log('finalizing archive');
     await archive.finalize();
@@ -52,9 +52,9 @@ export class ExtractManager {
     console.log(`finished cloning all repositories`);
   }
 
-  private createArchive(targetFile: string): archiver.Archiver {
+  private createArchive(targetFile: string, useTar = false): archiver.Archiver {
     const output = createWriteStream(targetFile);
-    const archive = archiver('zip', {
+    const archive = archiver(useTar ? 'tar' : 'zip', {
       zlib: { level: 9 }, // Sets the compression level.
     });
     // listen for all archive data to be written

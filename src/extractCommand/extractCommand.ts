@@ -20,11 +20,14 @@ export class ExtractCommand implements CommandModule {
       '"targetDir" - (optional) name of the directory in the archive to store the repository files in (default - repository name).';
     return yargs
       .positional('jsonPath', { describe: jsonDescription, type: 'string' })
-      .positional('destPath', { describe: 'destination zip file to store results', type: 'string' });
+      .positional('destPath', { describe: 'destination zip file to store results', type: 'string' })
+      .boolean('tar')
+      .alias('tar', ['t'])
+      .describe('t', 'create tar archive instead of zip');
   };
 
   public handler = async (args: Arguments): Promise<void> => {
-    await this.manager.zipSources(args['jsonPath'] as string, args['destPath'] as string);
+    await this.manager.zipSources(args['jsonPath'] as string, args['destPath'] as string, args['tar'] as boolean);
     return Promise.resolve();
   };
 }
