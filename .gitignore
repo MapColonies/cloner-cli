@@ -1,6 +1,6 @@
 # local configurations
 config/*local*.json
-
+local
 # Logs
 logs
 *.log

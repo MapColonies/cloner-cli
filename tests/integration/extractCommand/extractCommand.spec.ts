@@ -3,10 +3,11 @@ import { trace } from '@opentelemetry/api';
 
 import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
-import { SayCommandCliTrigger } from './helpers/CliTrigger';
+import { ExtractCommandCliTrigger } from './helpers/CliTrigger';
 
-describe('sayCommand', function () {
-  let cli: SayCommandCliTrigger;
+describe('extractCommand', function () {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let cli: ExtractCommandCliTrigger;
   let consoleLogMock: jest.SpyInstance;
   let processExitMock: jest.SpyInstance;
 
@@ -24,7 +25,7 @@ describe('sayCommand', function () {
       ],
       useChild: true,
     });
-    cli = new SayCommandCliTrigger(app);
+    cli = new ExtractCommandCliTrigger(app);
   });
 
   afterEach(() => {
@@ -33,18 +34,8 @@ describe('sayCommand', function () {
   });
 
   describe('Happy Path', function () {
-    it('logs given word to console', async function () {
-      await cli.callSay('test');
-
-      expect(consoleLogMock).toHaveBeenCalledWith('test');
-    });
-  });
-  describe('Bad Path', function () {
-    it('wont log to console when no param is given and exit with error code', async function () {
-      await cli.callSay();
-
-      expect(processExitMock).toHaveBeenCalledWith(1);
-      expect(consoleLogMock).toHaveBeenCalledTimes(0);
+    it('add tests', function () {
+      expect(true).toBeTruthy();
     });
   });
 });
