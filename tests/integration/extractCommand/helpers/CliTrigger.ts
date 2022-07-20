@@ -1,6 +1,6 @@
 import { App } from '../../../../src/app';
 
-export class HelloWorldCommandCliTrigger {
+export class ExtractCommandCliTrigger {
   public constructor(private readonly app: App) {}
 
   public async callCli(args: string[]): Promise<void> {

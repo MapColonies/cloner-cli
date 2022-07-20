@@ -19,7 +19,7 @@ export class ExtractManager {
     console.log('finalizing archive');
     await archive.finalize();
     console.log('removing clones');
-    await fsp.rmdir(cloneTarget, { recursive: true });
+    await fsp.rm(cloneTarget, { recursive: true });
   }
 
   private parseInputSources(inputSources: InputDirectorySource[], target: string): DirectorySource[] {
